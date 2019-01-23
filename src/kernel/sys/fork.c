@@ -162,7 +162,7 @@ found:
 
 	struct process *temp;
 	// putting the process in foregound or background
-	if(proc->priority < -30) //foreground TODO
+	if(proc->priority + proc->nice < -30) //foreground TODO
 		temp = foreground;
 	else //background
 		temp = background;
