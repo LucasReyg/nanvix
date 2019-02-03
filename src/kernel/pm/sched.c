@@ -22,6 +22,7 @@
 #include <nanvix/const.h>
 #include <nanvix/hal.h>
 #include <nanvix/pm.h>
+#include <nanvix/klib.h>
 #include <signal.h>
 
 /**
@@ -64,7 +65,6 @@ PUBLIC void resume(struct process *proc)
  */
 PUBLIC void yield(void)
 {
-	srand(time(NULL));
 
 	struct process *p;    /* Working process.     */
 	struct process *next; /* Next process to run. */
@@ -97,31 +97,29 @@ PUBLIC void yield(void)
 		if (p->state != PROC_READY)
 			continue;
 
-		else{
-			total_tickets = total_tickets + 1; //TODO give an amount of tickets depending on priority
-		}
+		total_tickets = total_tickets + (((p->priority - 40)/-10) + 1);
 	}
 
-	/* draw a winning ticket */
-	int winning_tickets = (rand()%total_tickets)+1;
-	int tickets_counter = 0;
+	if(total_tickets !=0){
+		/* draw a winning ticket */
+		ksrand(CURRENT_TIME);
+		int winning_tickets = (krand()%total_tickets)+1;
+		int tickets_counter = 0;
 
-	/* Get the process with winning tickets */
-		for (p = FIRST_PROC; p <= LAST_PROC; p++)
-	{
-		/* Skip non-ready process. */
-		if (p->state != PROC_READY)
-			continue;
+		/* Get the process with winning tickets */
+			for (p = FIRST_PROC; p <= LAST_PROC; p++)
+		{
+				/* Skip non-ready process. */
+				if (p->state != PROC_READY)
+					continue;
 
-		else{
-			tickets_counter = total_tickets + 1; //TODO give an amount of tickets depending on priority
-			if(tickets_counter >=winning_tickets){
-				next=p;
-				break;
+				tickets_counter = tickets_counter + (((p->priority - 40)/-10) + 1);
+				if(tickets_counter >= winning_tickets){
+					next=p;
+					break;
 			}
 		}
 	}
-
 	/* Switch to next process. */
 	next->priority = PRIO_USER;
 	next->state = PROC_RUNNING;
