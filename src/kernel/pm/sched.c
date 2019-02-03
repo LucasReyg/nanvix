@@ -89,17 +89,11 @@ PUBLIC void yield(void)
 	/* Choose a process to run next. */
 	next = IDLE;
 
-	// we chose the queue to use between foreground and background
-	struct process* queue;
-	if(foreground==NULL)
-		queue = background;
-	else
-		queue = foreground;
-
-	for (p = queue; p != NULL; p = p->next)
+	// we only look at foreground process
+	for  (p = FIRST_PROC; p <= LAST_PROC; p++)
 	{
-		/* Skip non-ready process. */
-		if (p->state != PROC_READY)
+		/* Skip non-ready or background process. */
+		if (p->state != PROC_READY || p->queue==0)
 			continue;
 
 		/*
@@ -118,6 +112,32 @@ PUBLIC void yield(void)
 		 */
 		else
 			p->counter++;
+	}
+
+	if (next==IDLE){ // there is no process on foreground we then look at background
+		for  (p = FIRST_PROC; p <= LAST_PROC; p++)
+		{
+			/* Skip non-ready or foreground process. */
+			if (p->state != PROC_READY || p->queue==1)
+				continue;
+
+			/*
+			* Process with higher
+			* waiting time found.
+			*/
+			if (p->counter > next->counter)
+			{
+				next->counter++;
+				next = p;
+			}
+
+			/*
+			* Increment waiting
+			* time of process.
+			*/
+			else
+				p->counter++;
+		}
 	}
 
 	/* Switch to next process. */

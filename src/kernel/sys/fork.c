@@ -160,22 +160,11 @@ found:
 
 	nprocs++;
 
-	struct process *temp;
 	// putting the process in foregound or background
 	if(proc->priority + proc->nice < -30) //foreground TODO
-		temp = foreground;
+		proc->queue = 1;
 	else //background
-		temp = background;
-
-	if(temp!=NULL){ // process added at the end of the list
-		while(temp->next != NULL){
-			temp = temp->next;
-		}
-		temp->next = proc;
-	}
-	else{ // process is the first in the list
-		temp = proc;
-	}
+		proc->queue = 0;
 
 	return (proc->pid);
 

@@ -74,10 +74,6 @@ PUBLIC void pm_init(void)
 	int i;             /* Loop index.      */
 	struct process *p; /* Working process. */
 
-	// initializing foreground and background pointers
-	foreground = NULL;
-	background = NULL;
-
 	/* Initialize the process table. */
 	for (p = FIRST_PROC; p <= LAST_PROC; p++)
 		p->flags = 0, p->state = PROC_DEAD;
@@ -124,6 +120,7 @@ PUBLIC void pm_init(void)
 	IDLE->alarm = 0;
 	IDLE->next = NULL;
 	IDLE->chain = NULL;
+	IDLE->queue = 0;
 
 	nprocs++;
 

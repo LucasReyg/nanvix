@@ -201,15 +201,12 @@
     	int counter;             /**< Remaining quantum.      */
     	int priority;            /**< Process priorities.     */
     	int nice;                /**< Nice for scheduling.    */
+			unsigned int queue;
     	unsigned alarm;          /**< Alarm.                  */
 		struct process *next;    /**< Next process in a list. */
 		struct process **chain;  /**< Sleeping chain.         */
 		/**@}*/
 	};
-
-	// pointers to first process of background and foreground list
-	struct process *foreground;
-	struct process *background;
 
 	/* Forward definitions. */
 	EXTERN void bury(struct process *);
