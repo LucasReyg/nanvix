@@ -1,6 +1,6 @@
 #include <sys/sem.h>
 
-int sys_semget(unsigned key){
+PUBLIC int sys_semget(unsigned key){
 
 	struct semaphore *s = FIRST_SEM;
 	int semid = 0;

@@ -1,6 +1,6 @@
 #include <sys/sem.h>
 
-int sys_semctl(int semid, int cmd, int val){
+PUBLIC int sys_semctl(int semid, int cmd, int val){
 	int valReturn;
 	struct semaphore *s;
 	s = (&semtab[semid]);

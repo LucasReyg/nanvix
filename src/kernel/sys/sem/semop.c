@@ -1,6 +1,6 @@
 #include <sys/sem.h>
 
-int sys_semop(int semid, int op){
+PUBLIC int sys_semop(int semid, int op){
 	int valReturn;
   
 	if (op < 0) {
