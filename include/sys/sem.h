@@ -25,16 +25,11 @@
 	#define FIRST_SEM ((&semtab[0]))           /**< First semaphore. */
 	#define LAST_SEM ((&semtab[PROC_MAX - 1])) /**< Last semaphore.  */
 
-	struct procList{
-		struct process proc;
-		procList *next;
-	};
-
 	struct semaphore{
 		int exists;
-		int key;
+		unsigned int key;
 		int counter;
-		procList *list;
+		struct process *list;
 	};
 	
 	struct semaphore semtab[PROC_MAX];

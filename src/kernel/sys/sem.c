@@ -6,11 +6,11 @@
  */
 void seminit(){
 	struct semaphore *sem;
-	for (sem = FIRST_SEM; sem <= LAST_SEM; s++){
-		s->exists = 0;
-		s->key = -1;
+	for (sem = FIRST_SEM; sem <= LAST_SEM; sem++){
+		sem->exists = 0;
+		sem->key = -1;
 	}
-  
+}  
   /**
    *  Creates a semaphore and sets its key and counter
    *  the semaphore is created in the first free spot in the semaphore table
@@ -19,16 +19,16 @@ int create(int n, unsigned key){
 	struct semaphore *sem = FIRST_SEM;
 	int semid = 0;
 
-	while(s->exists && s <= LAST_SEM){
+	while(sem->exists && sem <= LAST_SEM){
 		semid++;
-		s++;
+		sem++;
 	}
 
-	if(s <= LAST_SEM){
-		s->key = key;
-    s->exists = 1;
-		s->counter = n;
-		s->procList = NULL;
+	if(sem <= LAST_SEM){
+		sem->key = key;
+    sem->exists = 1;
+		sem->counter = n;
+		sem->list = NULL;
 		return semid;
 	}
 	else{
@@ -48,7 +48,7 @@ int down (int semid){
     s->counter--;
 	}
   else{
-    sleep(&s->queue, PRIO_SEM);
+    sleep(&s->list, PRIO_USER);
   }
 
 	return 0;
@@ -62,9 +62,9 @@ int up(int semid){
 	struct semaphore *s;
 	s = (&semtab[semid]);
 
-	if (s->counter==0 && s->queue != NULL)
+	if (s->counter==0 && s->list != NULL)
 	{
-		wakeup(&s->queue);
+		wakeup(&s->list);
 	}
 
 	return 0;
@@ -74,15 +74,13 @@ int up(int semid){
  *  destroy a semaphore
  */
 int destroy(int semid){
-	struct semaphore *s;
-	s = (&semtab[semid]);
+	struct semaphore *sem;
+	sem = (&semtab[semid]);
 
-	s->exists = 0;
-	s->key = -1;
-  s->counter = 0;
-	wakeup(&s->queue);
+	sem->exists = 0;
+	sem->key = -1;
+  sem->counter = 0;
+	wakeup(&sem->list);
 	
 	return 0;
-}
-  
 }
