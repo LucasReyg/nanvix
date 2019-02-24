@@ -41,6 +41,7 @@ int create(int n, unsigned key){
  * otherwise the process is blocked
  */
 int down (int semid){
+	disable_interrupts();
 	struct semaphore *s;
 	s = (&semtab[semid]);
   
@@ -48,9 +49,9 @@ int down (int semid){
     s->counter--;
 	}
   else{
-    sleep(&s->list, PRIO_USER);
+    sleep(&s->list, 20);
   }
-
+	enable_interrupts();
 	return 0;
 }
 
@@ -59,6 +60,7 @@ int down (int semid){
  * otherwise the counter is incremented
  */
 int up(int semid){
+	disable_interrupts();
 	struct semaphore *s;
 	s = (&semtab[semid]);
 
@@ -66,7 +68,10 @@ int up(int semid){
 	{
 		wakeupFirst(&s->list);
 	}
-
+	else{
+		s->counter++;
+	}
+	enable_interrupts();
 	return 0;
 }
 
