@@ -4,7 +4,7 @@
 /**
  *  Initializing the semaphore table
  */
-void seminit(){
+void sem_init(){
 	struct semaphore *sem;
 	for (sem = FIRST_SEM; sem <= LAST_SEM; sem++){
 		sem->exists = 0;
@@ -64,7 +64,7 @@ int up(int semid){
 
 	if (s->counter==0 && s->list != NULL)
 	{
-		wakeup(&s->list);
+		wakeupFirst(&s->list);
 	}
 
 	return 0;

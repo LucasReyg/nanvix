@@ -34,7 +34,7 @@
 	
 	struct semaphore semtab[PROC_MAX];
 	
-	void init_sem();
+	void sem_init();
 	int create(int n, unsigned key);
 	int down (int semid);
 	int up(int semid);

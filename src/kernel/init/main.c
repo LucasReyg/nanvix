@@ -123,7 +123,7 @@ PUBLIC void kmain(void)
 	mm_init();
 	pm_init();
 	fs_init();
-	init_sem();
+	sem_init();
 	
 	chkout(DEVID(TTY_MAJOR, 0, CHRDEV));
 	kprintf(KERN_INFO "kout is now initialized");
