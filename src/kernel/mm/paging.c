@@ -293,12 +293,13 @@ PRIVATE struct
 PRIVATE int allocf(void)
 {
 	int i;      /* Loop index.  */
-	int oldest; /* Oldest page. */
 	
-	#define OLDEST(x, y) (frames[x].age < frames[y].age)
-	
+	// We use these tables to store information about the class of all pages
+	int minimal_class = 3;
+	int current_class;
+	int page_replaced;
+		
 	/* Search for a free frame. */
-	oldest = -1;
 	for (i = 0; i < NR_FRAMES; i++)
 	{
 		/* Found it. */
@@ -311,19 +312,37 @@ PRIVATE int allocf(void)
 			/* Skip shared pages. */
 			if (frames[i].count > 1)
 				continue;
-			
-			/* Oldest page found. */
-			if ((oldest < 0) || (OLDEST(i, oldest)))
-				oldest = i;
+				
+				// we get the page table entry to check in which class it fits
+			struct pte *curr_pte = getpte(curr_proc,frames[i].addr);
+				
+			if(curr_pte->accessed==0 && curr_pte->dirty == 0)
+				current_class = 0;
+			else if(curr_pte->accessed==0 && curr_pte->dirty == 1)
+				current_class = 1;
+			else if(curr_pte->accessed==1 && curr_pte->dirty == 0)
+				current_class = 2;
+			else if(curr_pte->accessed==1 && curr_pte->dirty == 1)
+				current_class = 3;
+					
+			// a lower class is found
+			if (current_class < minimal_class){
+				page_replaced = i;
+				minimal_class = current_class;
+			}//another page table entry from the same class is found
+			else if (current_class == minimal_class){
+				// we randomly chose which page to replace between the two
+				if(krand()%2){
+					page_replaced = i;
+				}
 		}
+		
 	}
 	
-	/* No frame left. */
-	if (oldest < 0)
-		return (-1);
+}
 	
 	/* Swap page out. */
-	if (swap_out(curr_proc, frames[i = oldest].addr))
+	if (swap_out(curr_proc, frames[page_replaced].addr))
 		return (-1);
 	
 found:		
