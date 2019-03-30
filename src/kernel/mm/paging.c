@@ -324,6 +324,7 @@ PRIVATE int allocf(void)
 					frames[i].age = ticks;
 				}
 			}
+		}
 	}
 	
 	/* No frame left. */
