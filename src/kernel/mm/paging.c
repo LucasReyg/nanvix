@@ -295,7 +295,7 @@ PRIVATE int allocf(void)
 	int i;      /* Loop index.  */
 	
 	// We use these tables to store information about the class of all pages
-	int minimal_class = 3;
+	int minimal_class = 4;
 	int current_class;
 	int page_replaced;
 		
